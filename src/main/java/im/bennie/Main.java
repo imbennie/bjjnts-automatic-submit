@@ -138,7 +138,6 @@ public class Main {
         try {
             return responseObject.getBody().getInt("video_time");
         } catch (Exception e) {
-            log.error("Error while getting video time", e);
             return submitTime;
         }
     }
