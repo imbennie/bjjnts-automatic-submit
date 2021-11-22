@@ -127,9 +127,7 @@ public class Main {
                 if (finishedPlay(resp)) break;
                 waitFor2Minutes();
             }
-
         }
-
     }
 
     /**
@@ -162,11 +160,18 @@ public class Main {
                         resp.getBody().getInt("video_time");
     }
 
+    private static void checkResponse(ResponseObject resp) {
+        if (resp.getCode() == 2002 || resp.getCode() == 2003) {
+            System.exit(0);
+        }
+    }
+
     public static ResponseObject playVideo(Unit unit, int totalTime, int submitTime, int num, int count, boolean firstPlay) {
         if (submitTime > totalTime) submitTime = totalTime;
-
         log.info("第{}次提交学习时长请求，当前提交播放时间第{}秒处。", (int) (Math.ceil(num / 2.0)), submitTime);
-        return RequestUtil.updateStudyTime(unit.getVideoId(), submitTime, unit.getId(), firstPlay, num == count);
+        ResponseObject resp = RequestUtil.updateStudyTime(unit.getVideoId(), submitTime, unit.getId(), firstPlay, num == count);
+        checkResponse(resp);
+        return resp;
     }
 
 
