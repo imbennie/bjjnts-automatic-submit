@@ -68,8 +68,7 @@ public class Main {
 
 
     public static void playVideo(Unit unit) throws Exception {
-        System.out.println("================================================================");
-        log.info("正在处理 unit id: {}, video id: {}, title: {}, totalTime: {}, progress: {}, progressTime: {}",
+        log.info("\n正在处理 unit id: {}, video id: {}, title: {}, totalTime: {}, progress: {}, progressTime: {}",
                  unit.getId(),
                  unit.getVideoId(),
                  unit.getTitle(),

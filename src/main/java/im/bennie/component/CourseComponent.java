@@ -78,7 +78,7 @@ public class CourseComponent {
         try {
             if (RedisUtil.hasKeys(getCourseUnitKey())) RedisUtil.del();
         } catch (Exception e) {
-            log.error("Error while removing unit key.");
+            log.error("Error while removing unit key.", e);
         }
     }
 
