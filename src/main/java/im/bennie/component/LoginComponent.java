@@ -77,7 +77,7 @@ public class LoginComponent {
     }
 
     private static String getUserKey() {
-        return RedisUtil.getKey(RedisConst.USER_INFO_KEY, config.getUserId());
+        return RedisUtil.getKey(RedisConst.USER_INFO_KEY);
     }
 
 }

@@ -37,6 +37,14 @@ public class RedisUtil {
         );
     }
 
+    public static String getKey0(Object... param) {
+        Assert.notEmpty(param);
+        StringJoiner sj = new StringJoiner(KEY_DELIMITER);
+        for (Object p : param) {
+            sj.add(String.valueOf(p));
+        }
+        return sj.toString();
+    }
 
     public static String getKey(Object... param) {
         Assert.notEmpty(param);

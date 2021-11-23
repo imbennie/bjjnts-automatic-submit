@@ -151,7 +151,7 @@ public class CourseComponent {
     }
 
     private String getUnitVideoKey() {
-        return RedisUtil.getKey(courseId, RedisConst.UNIT_VIDEO_KEY);
+        return RedisUtil.getKey0("course", courseId, RedisConst.UNIT_VIDEO_KEY);
     }
 
     public List<Course> getCourses() {
