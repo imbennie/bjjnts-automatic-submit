@@ -50,31 +50,22 @@ tail -f -n500 ./logs/bjjnts.log
 [2021-11-24 14:49:53.634] INFO ---[main] im.bennie.component.LoginComponent#cacheUserInfo:41: Caching user info...
 [2021-11-24 14:49:55.247] INFO ---[main] im.bennie.component.LoginComponent#cacheUserInfo:47: Finished Caching.
 [2021-11-24 14:49:55.355] INFO ---[main] im.bennie.Config#loadConfig:63: Config(courseId=446, keyPrefix=bennie, doLogin=true, userId=10740743, username=xxxxxxxx, password=xxxxxxxx, accessToken=Bearer zo5MTB8rgLZlbrPB7IeFZ-8Aa8-hFIm9-1637736593)
-[2021-11-24 14:49:55.375] INFO ---[main] im.bennie.util.RequestUtil#listCourseInfo:110: Requesting for list courses(id = 446) info
-[2021-11-24 14:49:55.376] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apif.bjjnts.cn/courses/test-preview?course_id=446&class_id=27779
-[2021-11-24 14:49:56.250] INFO ---[main] im.bennie.Main#run:42: Total units is: 89
-[2021-11-24 14:49:56.252] INFO ---[main] im.bennie.Main#logVideoUnitProgress:82: 已播放视频单元数：59，未播放数：30
-[2021-11-24 14:49:56.255] INFO ---[main] im.bennie.component.CourseComponent#retrieveUnitVideoFromCache:60: Retrieving unit-video mapping from cache.
-[2021-11-24 14:49:56.337] INFO ---[main] im.bennie.Main#playVideo:91: Working on video unit [id = 9756, videoId = 9720, title = 5.5内存计算需求, totalTime = 253, progress = 0, progressTime = 240]. 
+[2021-11-24 16:27:57.355] INFO ---[main] im.bennie.util.RequestUtil#listCourseInfo:110: Requesting for list courses(id = 446) info
+[2021-11-24 16:27:57.355] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apif.bjjnts.cn/courses/test-preview?course_id=446&class_id=27779
+[2021-11-24 16:27:58.324] INFO ---[main] im.bennie.Main#run:43: Total units is: 89
+[2021-11-24 16:27:58.348] INFO ---[main] im.bennie.Main#logVideoUnitProgress:83: Video units, Finished: 62，Unfinished: 27.
+[2021-11-24 16:27:58.351] INFO ---[main] im.bennie.component.CourseComponent#retrieveUnitVideoFromCache:60: Retrieving unit-video mapping from cache.
+[2021-11-24 16:27:58.400] INFO ---[main] im.bennie.Main#playVideo:92: Working on video unit [id = 9760, videoId = 9724, title = 5.9内存计算实例-spark, totalTime = 338, progress = 0, progressTime = 0]. 
 
-[2021-11-24 14:49:56.337] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:73: Requesting to update study time.
-[2021-11-24 14:49:56.337] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apistudy.bjjnts.cn/studies/study?video_id=9720&u=10740743&time=253&unit_id=9756&class_id=27779&end=1
-[2021-11-24 14:49:56.653] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:82: Result: {"video_time":253,"count_time":"253"}
-[2021-11-24 14:49:56.654] INFO ---[main] im.bennie.Main#playVideo:91: Working on video unit [id = 9757, videoId = 9721, title = 5.6MapReduce文件传递数据, totalTime = 231, progress = 0, progressTime = 0]. 
-
-[2021-11-24 14:49:56.654] INFO ---[main] im.bennie.Main#playVideo:188: Submitting study time at 0s for 0 times.
-[2021-11-24 14:49:56.655] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:73: Requesting to update study time.
-[2021-11-24 14:49:56.655] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apistudy.bjjnts.cn/studies/study?video_id=9721&u=10740743&time=0&unit_id=9757&class_id=27779&start=1
-[2021-11-24 14:49:56.977] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:82: Result: {"video_time":0,"count_time":"231"}
-[2021-11-24 14:51:56.978] INFO ---[main] im.bennie.Main#playVideo:188: Submitting study time at 1s for 120 times.
-[2021-11-24 14:51:56.978] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:73: Requesting to update study time.
-[2021-11-24 14:51:56.978] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apistudy.bjjnts.cn/studies/study?video_id=9721&u=10740743&time=120&unit_id=9757&class_id=27779
-[2021-11-24 14:51:57.280] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:82: Result: {"video_time":120,"count_time":"231"}
-[2021-11-24 14:53:57.281] INFO ---[main] im.bennie.Main#playVideo:188: Submitting study time at 2s for 231 times.
-[2021-11-24 14:53:57.282] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:73: Requesting to update study time.
-[2021-11-24 14:53:57.282] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apistudy.bjjnts.cn/studies/study?video_id=9721&u=10740743&time=231&unit_id=9757&class_id=27779&end=1
-[2021-11-24 14:53:57.557] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:82: Result: {"video_time":231,"count_time":"231"}
-[2021-11-24 14:53:57.557] INFO ---[main] im.bennie.Main#playVideo:91: Working on video unit [id = 9758, videoId = 9722, title = 5.7内存计算的可行性, totalTime = 229, progress = 0, progressTime = 0].
+[2021-11-24 16:27:58.400] INFO ---[main] im.bennie.Main#playVideo:189: Submitting study time at 0s for 1 times.
+[2021-11-24 16:27:58.401] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:73: Requesting to update study time.
+[2021-11-24 16:27:58.401] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apistudy.bjjnts.cn/studies/study?video_id=9724&u=10740743&time=0&unit_id=9760&class_id=27779&start=1
+[2021-11-24 16:27:58.796] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:82: Result: {"video_time":0,"count_time":"338"}
+[2021-11-24 16:29:58.797] INFO ---[main] im.bennie.Main#playVideo:189: Submitting study time at 120s for 2 times.
+[2021-11-24 16:29:58.798] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:73: Requesting to update study time.
+[2021-11-24 16:29:58.798] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apistudy.bjjnts.cn/studies/study?video_id=9724&u=10740743&time=120&unit_id=9760&class_id=27779
+[2021-11-24 16:29:59.133] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:82: Result: {"video_time":120,"count_time":"338"}
+[2021-11-24 16:31:59.134] INFO ---[main] im.bennie.Main#playVideo:189: Submitting study time at 240s for 3 times.
 ```
 
 ## 接口分析
