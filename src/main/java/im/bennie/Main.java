@@ -1,7 +1,9 @@
 package im.bennie;
 
-import cn.hutool.core.lang.Assert;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.json.JSONObject;
 import im.bennie.component.CourseComponent;
+import im.bennie.consts.UnitTypeEnum;
 import im.bennie.model.ResponseObject;
 import im.bennie.model.Unit;
 import im.bennie.model.Video;
@@ -13,6 +15,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static im.bennie.consts.UnitTypeEnum.Video;
+
 /**
  * Created on 11/17 2021.
  * <p>
@@ -20,10 +24,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class Main {
-
-    // private static final Integer courseId = 446; // 大数据
-    // private static final Integer courseId = Integer.valueOf(System.getProperty("course_id")); //406 物联网工程导论
-    private static final Integer courseId = 406; //406 物联网工程导论
 
     private static Config config;
 
@@ -36,39 +36,67 @@ public class Main {
     private static void run() {
 
         CourseComponent cc = new CourseComponent(Config.CLASS_ID, config.getCourseId());
-        cc.cacheCourseUnit();
-        cc.cacheVideoInfoIfNeed();
+        cc.cacheUnitVideoInfoIfNeed();
 
-        List<Unit> unitList = cc.getUnits();
-        logoutProgress(unitList);
+        List<Unit> units = cc.getUnits();
 
-        List<Unit> units = unitList
-                .stream()
-                .filter(n -> n.getProgress_time() != Integer.parseInt(n.getTotal_time()))
-                .collect(Collectors.toList());
+        log.info("总单元数：{}", units.size());
+        logVideoUnitProgress(units);
 
-        Map<String, Video> videoMap = cc.getUnitVideoMap();
-
-        for (Unit u : units) {
-            try {
-                u.setVideoId(videoMap.get(u.getId()).getId());
-                playVideo(u);
-            } catch (Exception e) {
-                log.error("Error while play video.", e);
+        // 过滤出未完成的视频单元。
+        List<Unit> videoUnits = cc.filterUnFinishedVideoUnits(units);
+        if (CollectionUtil.isNotEmpty(videoUnits)) {
+            Map<String, Video> videoMap = cc.getUnitVideoMap();
+            for (Unit u : videoUnits) {
+                try {
+                    if (UnitTypeEnum.type(u) == Video) {
+                        u.setVideoId(videoMap.get(u.getId()).getId());
+                        playVideo(u);
+                    }
+                } catch (Exception e) {
+                    log.error("Error while play video.", e);
+                }
             }
         }
 
+
+        // 获取可标记的图文单元。
+        Map<String, Boolean> articleUnits = cc.getArticleUnitProgressMap(units);
+        if (CollectionUtil.isNotEmpty(articleUnits)) {
+            logArticleUnitProgress(articleUnits);
+            Map<String, Object> map = articleUnits.entrySet().stream()
+                    .filter(entry -> !entry.getValue())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey, entry -> markArticleUnitOK(entry.getKey()).getCode() != 200
+                    ));
+            cc.cacheArticleUnitProgress(map);
+        }
+
+        logVideoUnitProgress(units);
+
     }
 
-    private static void logoutProgress(List<Unit> unitList) {
-        Assert.notEmpty(unitList);
-        Map<Boolean, List<Unit>> partitionMap = unitList.stream().collect(Collectors.partitioningBy(u -> u.getProgress_time() != 0));
-        log.info("总视频数：{}，已播放视频数：{}，未播放视频数：{}", unitList.size(), partitionMap.get(true).size(), partitionMap.get(false).size());
+    private static ResponseObject markArticleUnitOK(String unitId) {
+        log.info("正在将图文单元[ID={}]标记为已完成", unitId);
+        return RequestUtil.markArticleUnitFinished(Config.CLASS_ID, config.getCourseId(), unitId);
+    }
+
+    private static void logVideoUnitProgress(List<Unit> units) {
+        Map<Boolean, List<Unit>> videoMap = units.stream()
+                .filter(UnitTypeEnum::isVideo)
+                .collect(Collectors.partitioningBy(u -> u.getProgress_time() != 0));
+
+        log.info("已播放视频单元数：{}，未播放数：{}", videoMap.get(true).size(), videoMap.get(false).size());
+    }
+
+    private static void logArticleUnitProgress(Map<String, Boolean> map) {
+        long count = map.values().stream().filter(e -> e).count();
+        log.info("已标记图文单元数：{}，未标记数：{}", count, map.size() - count);
     }
 
 
     public static void playVideo(Unit unit) throws Exception {
-        log.info("\n正在处理 unit id: {}, video id: {}, title: {}, totalTime: {}, progress: {}, progressTime: {}",
+        log.info("正在处理 unit id: {}, video id: {}, title: {}, totalTime: {}, progress: {}, progressTime: {} \n",
                  unit.getId(),
                  unit.getVideoId(),
                  unit.getTitle(),
@@ -159,7 +187,10 @@ public class Main {
     }
 
     private static void checkResponse(ResponseObject resp) {
-        if (resp.getCode() == 2002 || resp.getCode() == 2003) {
+        JSONObject body = resp.getBody();
+        Integer    code = body.getInt("code", 0);
+        if (code == 2002 || code == 2003) {
+            log.info("System is going to shutdown.");
             System.exit(0);
         }
     }

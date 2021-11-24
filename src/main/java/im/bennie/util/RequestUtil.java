@@ -37,8 +37,28 @@ public class RequestUtil {
     private static final String LOGIN_URL             = "https://apif.bjjnts.cn/account/login";
     private static final String LIST_COURSE_URL       = "https://apif.bjjnts.cn/courses/test-preview?course_id=%d&class_id=%d";
     private static final String SUBMIT_STUDY_TIME_URL = "https://apistudy.bjjnts.cn/studies/study?video_id=%s&u=%s&time=%d&unit_id=%s&class_id=%d";
+    private static final String MARK_ARTICLE_UNIT_URL = "https://apif.bjjnts.cn/course-unit-maps";
 
     private static final Config config = Config.getInstance();
+
+    /**
+     * 图文单元，直接发送请求标记已完成。
+     */
+    public static ResponseObject markArticleUnitFinished(int classId, int courseId, String unitId) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost(MARK_ARTICLE_UNIT_URL);
+            setHeader(httpPost);
+            httpPost.setHeader("Referer", String.format("www.bjjnts.cn/study/courseware?course_id=%s&unit_id=%s&class_id=%s",
+                                                        courseId, unitId, classId));
+            String data = String.format("{\"course_id\":\"%d\",\"unit_id\":\"%s\",\"class_id\":\"%d\"}",
+                                        courseId, unitId, classId);
+            httpPost.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
+            return httpClient.execute(httpPost, responseObjectHandler());
+        } catch (IOException e) {
+            log.error("Error", e);
+            return ResponseObject.onException();
+        }
+    }
 
     /**
      * @param firstStart 该视频是否第一次播放，首次更新播放时长。
@@ -93,7 +113,6 @@ public class RequestUtil {
     }
 
     public static List<Course> listCourseInfo(int courseId, int classId) {
-
         String urlStr = String.format(LIST_COURSE_URL, courseId, classId);
         log.info("Request to list course info. url: {}", urlStr);
 
@@ -154,7 +173,6 @@ public class RequestUtil {
     private static ResponseHandler<String> bodyHandler() {
         return RequestUtil::getBody;
     }
-
 
     private static void setHeader(HttpRequestBase req) {
         req.setHeader("Connection", "keep-alive");

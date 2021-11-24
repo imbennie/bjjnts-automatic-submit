@@ -1,6 +1,5 @@
 package im.bennie.model;
 
-import cn.hutool.json.JSONUtil;
 import lombok.Data;
 
 /**
@@ -29,8 +28,4 @@ public class Video {
     private String update_time;
     private String remarks;
 
-    @Override
-    public String toString() {
-        return JSONUtil.toJsonStr(this);
-    }
 }

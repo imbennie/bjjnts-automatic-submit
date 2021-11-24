@@ -1,39 +1,81 @@
-# 程序说明
+# 京训钉自动挂机提交学习时长
 
-## 配置项
+## Useful tools
 
-## 启动程序
+- JSON格式化：https://www.json.cn/json/jsononline.html
+
+- JSON转Java、PHP等语言实体：https://www.json.cn/json/json2java.html
+
+- CURL 转 Java：
+  - https://fivesmallq.github.io/curl-to-java/
+
+- 在线CURL请求：https://reqbin.com/curl
+
+## 程序说明
+
+#### 配置项
+
+| 配置项    | 示例值                                      | 说明                                                         |
+| --------- | ------------------------------------------- | ------------------------------------------------------------ |
+| login     | true                                        | 是否登录到账号。                                             |
+| username  | 13311112222                                 | 手机号。                                                     |
+| password  | sssss                                       | 明文密码。                                                   |
+| courseId  | 406                                         | 课程ID                                                       |
+| keyPrefix | bennie                                      | 用于redis中key的前缀。为空时为当前时间戳。**（可选）**       |
+| token     | a-iQ_qHLYe7Lp7p2GDeNT8_CnZg25CQ4-1637546627 | 访问Token。`long=false`时需提供该值。可从登录接口响应`token`字段中获取。 |
+| userId    | 10740728                                    | 用户ID。`long=false`时需提供该值。可从登录接口响应`id`字段中获取。 |
+
+支持通过`java -jar -Dkey=value`方式传值。实际上，程序中以`System.getProperty("key")`方式读取配置值。
+
+#### 启动程序
+
+**不登录账号：**
 
 ```shell
 nohup java -Xmx64m -Xms64m -jar -Dlogin=false -Dtoken=a-iQ_qHLYe7Lp7p1GDeNT8_CnZg25CQ4-1637546627 -DuserId=10740728 -DcourseId=406 -DkeyPrefix=hb ./bjjnts-1.0-SNAPSHOT.jar > /dev/null 2>&1 & 
+```
+
+**登录账号：**
+
+```shell
+nohup java -Xmx64m -Xms64m -jar -Dlogin=true -Dusername=13311112222 -Dpassword=sssss -DcourseId=406 -DkeyPrefix=hb ./bjjnts-1.0-SNAPSHOT.jar > /dev/null 2>&1 & 
 ```
 
 View log：
 
 ```shell
 tail -f -n500 ./logs/bjjnts.log
+
+[2021-11-23 10:17:53.027] INFO ---[main                          ] i.b.u.RequestUtil             ##loginAccount:80: Logging into your account, using [username: 15058221727, password: 6868668].
+[2021-11-23 10:17:54.796] INFO ---[main                          ] i.b.c.LoginComponent          ##cacheUserInfo:70: Caching user info...
+[2021-11-23 10:17:56.078] INFO ---[main                          ] i.b.c.LoginComponent          ##cacheUserInfo:76: Finished Caching.
+[2021-11-23 10:17:56.111] INFO ---[main                          ] i.b.Config                    ##loadConfig:63: Config(courseId=406, keyPrefix=gl, doLogin=true, userId=10740743, username=xxxxxx, password=xxxxx, accessToken=Bearer a-iQ_qHLYe7Lp7p2GDeNT8_CnZg25CQ4-1637546627)
+[2021-11-23 10:17:56.130] INFO ---[main                          ] i.b.c.CourseComponent         ##cacheCourseUnit:59: Caching course units info..
+[2021-11-23 10:17:56.130] INFO ---[main                          ] i.b.u.RequestUtil             ##listCourseInfo:98: Request to list course info. url: https://apif.bjjnts.cn/courses/test-preview?course_id=406&class_id=27779
+[2021-11-23 10:17:56.578] DEBUG---[main                          ] i.b.c.CourseComponent         ##cacheCourseUnit:62: key: gl_406_unit
+[2021-11-23 10:17:56.622] INFO ---[main                          ] i.b.c.CourseComponent         ##cacheCourseUnit:74: Caching finished.
+[2021-11-23 10:17:56.636] INFO ---[main                          ] i.b.Main                      ##logoutProgress:66: 总视频数：20，已播放视频数：11，未播放视频数：9
+
+
+[2021-11-23 10:23:57.468] INFO ---[main                          ] i.b.Main                      ##playVideo:72: 正在处理 unit id: 8371, video id: 8427, title: 视频单元, totalTime: 713, progress: 0, progressTime: 0
+[2021-11-23 10:23:57.468] INFO ---[main                          ] i.b.Main                      ##playVideo:170: 第0次提交学习时长请求，当前提交播放时间第0秒处。
+[2021-11-23 10:23:57.468] INFO ---[main                          ] i.b.u.RequestUtil             ##updateStudyTime:61: 更新学习时间URL：https://apistudy.bjjnts.cn/studies/study?video_id=8427&u=10740743&time=0&unit_id=8371&class_id=27779&start=1
+[2021-11-23 10:23:57.767] INFO ---[main                          ] i.b.u.RequestUtil             ##updateStudyTime:69: Result: {"video_time":0,"count_time":"713"}
+[2021-11-23 10:25:57.769] INFO ---[main                          ] i.b.Main                      ##playVideo:170: 第1次提交学习时长请求，当前提交播放时间第120秒处。
+[2021-11-23 10:25:57.769] INFO ---[main                          ] i.b.u.RequestUtil             ##updateStudyTime:61: 更新学习时间URL：https://apistudy.bjjnts.cn/studies/study?video_id=8427&u=10740743&time=120&unit_id=8371&class_id=27779
+[2021-11-23 10:25:58.051] INFO ---[main                          ] i.b.u.RequestUtil             ##updateStudyTime:69: Result: {"video_time":120,"count_time":"713"}
+[2021-11-23 10:27:58.052] INFO ---[main                          ] i.b.Main                      ##playVideo:170: 第2次提交学习时长请求，当前提交播放时间第240秒处。
 ```
 
-# 京训钉 刷学习时长接口分析
+## 接口分析
 
-一些有用的工具：
-
-JSON格式：https://www.json.cn/json/jsononline.html
-
-JSON转Java、PHP等语言实体：https://www.json.cn/json/json2java.html
-
-CURL 转 Java：
-
-- https://fivesmallq.github.io/curl-to-java/
-- https://reqbin.com/curl
-
-## 登录接口
+#### 登录接口
 
 Request：
 
 ```shell
-# username: 手机号
-# password：密码，明文
+## username: 手机号
+## password：密码，明文
 
 curl 'https://apif.bjjnts.cn/account/login' -X POST -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0' -H 'Accept: application/json, text/plain, */*' -H 'Accept-Language: zh-CN,en-US;q=0.7,en;q=0.3' --compressed -H 'Referer: https://www.bjjnts.cn/user/login' -H 'Content-Type: application/json' -H 'X-Client-Type: pc' -H 'Origin: https://www.bjjnts.cn' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' --data-raw '{"username":"15058221727","password":"6868668","type":1}'
 ```
@@ -87,7 +129,7 @@ Response：
 }
 ```
 
-## 获取课程所有单元视频详情信息
+#### 获取课程所有单元视频详情信息
 
 返回数据中包含某章节内视频单元的视频具体信息：时长、名称、当前播放时间、总时间、是否已播放等。
 
@@ -123,7 +165,7 @@ Response：
 
 see：https://pastebin.com/twvtC7n0
 
-## 获取单个课程单元的视频信息
+#### 获取单个课程单元的视频信息
 
 Request：
 
@@ -263,7 +305,7 @@ Response：
 }
 ```
 
-## 提交单元视频的学习时间点
+#### 提交单元视频的学习时间点
 
 分两种情况：
 
@@ -274,7 +316,7 @@ Response：
 
 如果是新播放的视频，那么初次提交时间从0开始，继续播放的视频，提交时间可以从当前播放时间120秒后开始。当前视频的播放时间的`progress_time`属性可以**获取单元的video信息**的接口响应中取得。
 
-### 播放新视频
+###### 播放新视频
 
 首次播放时注意，参数`time=0&start=1`，time从0开始，并且多出`start=1`参数。
 
@@ -354,7 +396,7 @@ curl 'https://apistudy.bjjnts.cn/studies/study?video_id=9679&u=10740728&time=300
   --compressed
 ```
 
-### 继续播放视频
+###### 继续播放视频
 
 例如一个视频321秒，之前未播放完，接下来继续播放，那么提交参数时，可以从当前播放视频的时间点追加120秒继续播放，然后继续提交至视频总时长即可。
 
