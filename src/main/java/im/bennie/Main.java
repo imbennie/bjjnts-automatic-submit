@@ -72,7 +72,7 @@ public class Main {
     }
 
     private static ResponseObject markArticleUnitOK(String unitId) {
-        log.info("Working on article unit [id: {}].", unitId);
+        log.info("Working on article unit(id: {}).", unitId);
         return RequestUtil.markArticleUnitFinished(Config.CLASS_ID, config.getCourseId(), unitId);
     }
 
@@ -186,7 +186,7 @@ public class Main {
 
     public static ResponseObject playVideo(Unit unit, int totalTime, int submitTime, int num, int count, boolean firstPlay) {
         if (submitTime > totalTime) submitTime = totalTime;
-        log.info("Submitting study time at {}s for {} times.", (int) (Math.ceil(num / 2.0)), submitTime);
+        log.info("Submitting study time at {}s for {} times.", submitTime, ((int) (Math.ceil(num / 2.0)) + 1));
         ResponseObject resp = RequestUtil.updateStudyTime(unit.getVideoId(), submitTime, unit.getId(), firstPlay, num == count);
         checkResponse(resp);
         return resp;
