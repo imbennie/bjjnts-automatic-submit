@@ -20,6 +20,7 @@ import static im.bennie.consts.UnitTypeEnum.Video;
 /**
  * Created on 11/17 2021.
  * <p>
+ *
  * @author Bennie
  */
 @Slf4j
@@ -79,12 +80,12 @@ public class Main {
         Map<Boolean, List<Unit>> videoMap = units.stream()
                 .filter(UnitTypeEnum::isVideo)
                 .collect(Collectors.partitioningBy(u -> u.getProgress_time() != 0));
-        log.info("已播放视频单元数：{}，未播放数：{}", videoMap.get(true).size(), videoMap.get(false).size());
+        log.info("Video units, Finished: {}，Unfinished: {}.", videoMap.get(true).size(), videoMap.get(false).size());
     }
 
     private static void logArticleUnitProgress(Map<String, Boolean> map) {
         long count = map.values().stream().filter(e -> e).count();
-        log.info("已标记图文单元数：{}，未标记数：{}", count, map.size() - count);
+        log.info("Article units, Finished: {}, Unfinished: {}.", count, map.size() - count);
     }
 
     public static void playVideo(Unit unit) throws Exception {
