@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 
 /**
  * Created on 11/20 2021.
+ *
  * @author Bennie
  */
 @Data
@@ -51,49 +52,19 @@ public class CourseComponent {
         return courses;
     }
 
-    /**
-     * Cache unit info of the course.
-     */
-    // public void cacheCourseVideoUnit() {
-    //     rmCourseUnitCache();
-    //     log.info("Caching course units info..");
-    //     List<Unit> units = listUnits();
-    //     String     key   = getVideoUnitKey();
-    //     log.debug("key: {}", key);
-    //
-    //     Map<String, Object> unitMap = units.stream()
-    //             .collect(Collectors.toMap(
-    //                     Unit::getId,
-    //                     JSONUtil::toJsonStr
-    //             ));
-    //     try {
-    //         RedisUtil.hSet(key, unitMap);
-    //     } catch (Exception e) {
-    //         log.error("Error while caching units info", e);
-    //     }
-    //     log.info("Caching finished.");
-    // }
-
-    // public void rmCourseUnitCache() {
-    //     try {
-    //         String key = getVideoUnitKey();
-    //         if (RedisUtil.hasKeys(key)) RedisUtil.del(key);
-    //     } catch (Exception e) {
-    //         log.error("Error while removing unit key.", e);
-    //     }
-    // }
     public Map<String, Video> getUnitVideoMap() {
         return unitVideoMap != null ? unitVideoMap : retrieveUnitVideoFromCache();
     }
 
     private Map<String, Video> retrieveUnitVideoFromCache() {
+        log.info("Retrieving unit-video mapping from cache.");
         String key = getUnitVideoMappingKey();
         try {
             if (!RedisUtil.hasKeys(key)) {
-                log.info("There's no unit-video mapping in cache.");
+                throw new RuntimeException("Can't find unit-video mapping in cache.");
             }
         } catch (Exception e) {
-            // ignore.
+            throw new RuntimeException(e);
         }
 
         Map<String, Object> unitVideoMap = null;
@@ -123,30 +94,29 @@ public class CourseComponent {
     }
 
     /**
-     * Build a map of unit and video.
+     * Build a mapping of unit and video.
      * This should be cache only once.
      */
     public void cacheUnitVideoInfo() {
-        String k = getUnitVideoMappingKey();
-        log.info("Caching unit-video mapping, key: {}", k);
+        String key = getUnitVideoMappingKey();
+        log.info("Caching unit-video relation mapping. Key: {}", key);
         List<Unit> videoUnits = getUnits(UnitTypeEnum::isVideo);
-        Map<String, Video> map = videoUnits.stream()
+        Map<String, Video> vm = videoUnits.stream()
                 .collect(Collectors.toMap(
                         Unit::getId,
                         unit -> RequestUtil.getUnitVideoInfo(unit.getId(), classId)
                 ));
 
+        this.unitVideoMap = vm;
 
-        this.unitVideoMap = map;
-
-        Map<String, Object> cacheMap = map.entrySet().stream()
+        Map<String, Object> cache = vm.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> JSONUtil.toJsonStr(entry.getValue())
                 ));
 
         try {
-            RedisUtil.hSet(k, cacheMap);
+            RedisUtil.hSet(key, cache);
         } catch (Exception e) {
             log.error("Error on caching", e);
         }
@@ -157,30 +127,6 @@ public class CourseComponent {
     public List<Course> getCourses() {
         return courses != null ? courses : requestCourses();
     }
-
-    // private List<Unit> retrieveVideoUnitsFromCache() {
-    //     String key = getVideoUnitKey();
-    //     try {
-    //         if (!RedisUtil.hasKeys(key)) {
-    //             return Collections.emptyList();
-    //         }
-    //     } catch (Exception e) {
-    //         // ignore.
-    //     }
-    //
-    //     LinkedHashMap<String, Object> unitMap = null;
-    //     try {
-    //         unitMap = RedisUtil.entries(key);
-    //     } catch (Exception e) {
-    //         log.error("Error while retrieve course units.", e);
-    //     }
-    //     return CollectionUtil.isEmpty(unitMap) ? Collections.emptyList() :
-    //             unitMap.values()
-    //                     .stream()
-    //                     .map(e -> JSONUtil.toBean((String) e, Unit.class))
-    //                     .collect(Collectors.toList());
-    // }
-
 
     public List<Unit> getUnits(Predicate<Unit> p) {
         return getCourses()
@@ -218,10 +164,6 @@ public class CourseComponent {
         return RedisUtil.getKey0("course", courseId, RedisConst.UNIT_VIDEO_MAPPING_KEY);
     }
 
-    // private String getVideoUnitKey() {
-    //     return RedisUtil.getKey(courseId, RedisConst.VIDEO_UNIT_INFO_KEY);
-    // }
-
     private String getArticleUnitKey() {
         return RedisUtil.getKey("course", courseId, RedisConst.ARTICLE_UNIT_INFO_KEY);
     }
@@ -243,20 +185,25 @@ public class CourseComponent {
     }
 
     /**
-     * Cache unfinished article units.
+     * Save unfinished article units to cache, We can find out
+     * which are unfinished to be continued to deal with it later.
+     *
+     * @param map key: article unit id, value: true/false.
      */
-    public void cacheArticleUnitProgress(Map<String, Object> articleUnitProgressMap) {
-
+    public void cacheArticleUnitProgress(Map<String, Object> map) {
+        log.info("Caching article unit study progress.");
         String key = getArticleUnitKey();
         try {
             if (RedisUtil.hasKeys(key)) RedisUtil.del(key);
-            RedisUtil.hSet(key, articleUnitProgressMap);
+            RedisUtil.hSet(key, map);
         } catch (Exception e) {
-            throw new RuntimeException("Error while caching course article units.", e);
+            log.error("Error while caching course article units.", e);
         }
+        log.info("Caching finished.");
     }
 
     public Map<String, Boolean> getArticleUnitProgressMap(List<Unit> units) {
+        log.info("Getting article unit study progress.");
         String key = getArticleUnitKey();
         try {
             if (RedisUtil.hasKeys(key)) {
@@ -267,6 +214,8 @@ public class CourseComponent {
         } catch (Exception e) {
             log.error("Error while retrieve from redis", e);
         }
+        log.info("Trying to get from origin Units because we didn't get results from cache.");
+        // Consider all article units are unfinished.
         return filterArticleUnits(units).stream().collect(Collectors.toMap(Unit::getId, u -> false));
     }
 }

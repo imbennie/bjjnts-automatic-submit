@@ -20,36 +20,7 @@ public class LoginComponent {
 
     private static final Config config = Config.getInstance();
 
-    public static void main(String[] args) {
-        UserInfo userInfo = new LoginComponent().getUserInfo();
-        System.out.println("userInfo = " + userInfo);
-    }
-
     private UserInfo userInfo;
-
-    /**
-     * Trying to retrieve from cache first if it's {@code null}
-     * or via a logging if we need to do so.
-     */
-    public UserInfo getUserInfo() {
-        if (userInfo == null) {
-            UserInfo u = retrieveUserInfo();
-            return u != null ? u : login();
-        }
-        return userInfo;
-    }
-
-    public UserInfo retrieveUserInfo() {
-        try {
-            String s = (String) RedisUtil.get(getUserKey());
-            if (s != null) {
-                this.userInfo = JSONUtil.toBean(s, UserInfo.class);
-            }
-            return this.userInfo;
-        } catch (Exception e) {
-            throw new RuntimeException("Retrieving user info failed.", e);
-        }
-    }
 
     public UserInfo login() {
         String resp = doLogin();

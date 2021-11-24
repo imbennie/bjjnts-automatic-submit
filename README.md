@@ -135,8 +135,6 @@ Response：
 
 Request：
 
-参数：
-
 - course_id=446 课程id
 - class_id=27779 班级id
 
@@ -163,7 +161,7 @@ curl 'https://apif.bjjnts.cn/courses/test-preview?course_id=446&class_id=27779' 
 
 Response：
 
-see：https://pastebin.com/twvtC7n0
+Too long, see：https://pastebin.com/twvtC7n0
 
 #### 获取单个课程单元的视频信息
 
@@ -300,8 +298,8 @@ Response：
 "total_time": "312", // 视频总时长
 
 "video": {
-"id": "9682", // 单元对应视频的视频id，在提交学习时长接口中作请求参数。
-....
+    "id": "9682", // 单元对应视频的视频id，在提交学习时长接口中作请求参数。
+    ....
 }
 ```
 
@@ -309,16 +307,18 @@ Response：
 
 分两种情况：
 
-1. 播放新的视频。
-2. 继续已播放的视频。
+1. 播放新视频。
+2. 继续已播放视频。
 
-提交视频播放时间点，最好是120秒提交一次，否则会检测到频繁提交，在程序中可以设置线程延迟。
+提交视频播放时间点，最好是120秒提交一次，否则会检测到频繁提交，在程序中可以设置延迟。
 
 如果是新播放的视频，那么初次提交时间从0开始，继续播放的视频，提交时间可以从当前播放时间120秒后开始。当前视频的播放时间的`progress_time`属性可以**获取单元的video信息**的接口响应中取得。
 
-###### 播放新视频
+##### 播放新视频
 
-首次播放时注意，参数`time=0&start=1`，time从0开始，并且多出`start=1`参数。
+**首次播放：**
+
+注意，参数`time=0&start=1`，time从0开始，并且多出`start=1`参数。
 
 ```shell
 
@@ -344,7 +344,7 @@ Response：
   --compressed
 ```
 
-正常提交:
+**正常提交：**
 
 ```shell
 curl 'https://apistudy.bjjnts.cn/studies/study?video_id=9679&u=10740728&time=300&unit_id=9715&class_id=27779' \
@@ -369,7 +369,7 @@ curl 'https://apistudy.bjjnts.cn/studies/study?video_id=9679&u=10740728&time=300
   --compressed
 ```
 
-最后一次提交：
+**末次提交：**
 
 参数`time=300&end=1`，time等于视频总时间，且添加`end=1`。
 
@@ -396,8 +396,38 @@ curl 'https://apistudy.bjjnts.cn/studies/study?video_id=9679&u=10740728&time=300
   --compressed
 ```
 
-###### 继续播放视频
+##### 继续已播放视频
 
 例如一个视频321秒，之前未播放完，接下来继续播放，那么提交参数时，可以从当前播放视频的时间点追加120秒继续播放，然后继续提交至视频总时长即可。
 
 继续提交时间时不需要提供`start=1`参数。
+
+#### 标记图文单元已完成
+
+图文单元直接提交请求标记完成。
+
+```shell
+curl 'https://apif.bjjnts.cn/course-unit-maps' 
+    -X 'POST' \
+    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0' \
+    -H 'Accept: application/json, text/plain, */*' \
+    -H 'Accept-Language: zh-CN,en-US;q=0.7,en;q=0.3' \
+    -H 'Referer: https://www.bjjnts.cn/study/courseware?course_id=406&unit_id=8352&class_id=27779' \
+    -H 'Content-Type: application/json' \
+    -H 'X-Client-Type: pc' \
+    -H 'Authorization: Bearer OrpqSzeYzq9NRPccxS3poDG0_bCxeBU3-1637646278' \
+    -H 'Origin: https://www.bjjnts.cn' \
+    -H 'DNT: 1' \
+    -H 'Connection: keep-alive' \
+    -H 'Sec-Fetch-Dest: empty' \
+    -H 'Sec-Fetch-Mode: cors' \
+    -H 'Sec-Fetch-Site: same-site' \
+    --data '{"course_id":"406","unit_id":"8354","class_id":"27779"}' \
+    --compressed
+```
+
+**Request Body：**
+
+```
+--data '{"course_id":"406","unit_id":"8354","class_id":"27779"}'
+```

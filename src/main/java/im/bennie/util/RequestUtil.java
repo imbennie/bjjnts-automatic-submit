@@ -26,6 +26,7 @@ import static im.bennie.Config.CLASS_ID;
 
 /**
  * Created on 11/20 2021.
+ *
  * @author Bennie
  */
 @Slf4j
@@ -41,9 +42,6 @@ public class RequestUtil {
 
     private static final Config config = Config.getInstance();
 
-    /**
-     * 图文单元，直接发送请求标记已完成。
-     */
     public static ResponseObject markArticleUnitFinished(int classId, int courseId, String unitId) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(MARK_ARTICLE_UNIT_URL);
@@ -61,24 +59,19 @@ public class RequestUtil {
     }
 
     /**
-     * @param firstStart 该视频是否第一次播放，首次更新播放时长。
-     * @param lastEnd    最后一次更新学习时长。
+     * @param firstStart Set true if It's first time to submit study time.
+     * @param lastEnd    Set true if It's last time submit study time.
      */
     public static ResponseObject updateStudyTime(String videoId, int time, String unitId, boolean firstStart,
                                                  boolean lastEnd) {
 
-        String urlStr = String.format(SUBMIT_STUDY_TIME_URL, videoId, config.getUserId(), time, unitId,
-                                      CLASS_ID);
+        String urlStr = String.format(SUBMIT_STUDY_TIME_URL, videoId, config.getUserId(), time, unitId, CLASS_ID);
 
-        if (lastEnd) {
-            urlStr += "&end=1";
-        }
+        if (lastEnd) urlStr += "&end=1";
+        if (firstStart) urlStr += "&start=1";
 
-        if (firstStart) {
-            urlStr += "&start=1";
-        }
-
-        log.info("更新学习时间URL：{}", urlStr);
+        log.info("Requesting to update study time.");
+        logRequestUrl(urlStr);
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost post = new HttpPost(urlStr);
@@ -97,7 +90,7 @@ public class RequestUtil {
 
     public static String loginAccount(String username, String password) {
         String param = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\",\"type\":1}";
-        log.info("Logging into your account, using [username: {}, password: {}].", username, password);
+        log.info("Logging into your account username = {}, password = {}", username, password);
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(LOGIN_URL);
             setHeader(httpPost);
@@ -105,38 +98,35 @@ public class RequestUtil {
             httpPost.setHeader("Referer", LOGIN_URL);
             httpPost.setEntity(new StringEntity(param, ContentType.APPLICATION_JSON));
             String responseBody = httpClient.execute(httpPost, bodyHandler());
-            log.debug("login response: {}", responseBody);
+            log.debug("Login response: {}", responseBody);
             return responseBody;
         } catch (Exception e) {
-            throw new RuntimeException("Login failed！", e);
+            throw new RuntimeException("Login failed!", e);
         }
     }
 
     public static List<Course> listCourseInfo(int courseId, int classId) {
         String urlStr = String.format(LIST_COURSE_URL, courseId, classId);
-        log.info("Request to list course info. url: {}", urlStr);
+        log.info("Requesting for list courses(id = {}) info", courseId);
+        logRequestUrl(urlStr);
 
         List<Course> courses;
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet get = new HttpGet(urlStr);
             setHeader(get);
-            get.setHeader("Referer", String.format("https://www.bjjnts.cn/study?course_id=%d&class_id%d", courseId,
-                                                   classId));
+            get.setHeader("Referer", String.format("https://www.bjjnts.cn/study?course_id=%d&class_id%d",
+                                                   courseId, classId));
 
             String     responseBody = httpClient.execute(get, bodyHandler());
             JSONObject jsonObject   = JSONUtil.parseObj(responseBody);
             courses = jsonObject.getJSONArray("course").toList(Course.class);
         } catch (IOException e) {
-            throw new RuntimeException("读取课程信息失败", e);
+            throw new RuntimeException("Error", e);
         }
         return courses;
     }
 
-    /**
-     * @param unitId  单元ID
-     * @param classId 课程ID
-     */
     public static Video getUnitVideoInfo(String unitId, int classId) {
         String url = String.format("https://apif.bjjnts.cn/course-units/%s?class_id%d", unitId, classId);
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -148,7 +138,7 @@ public class RequestUtil {
             JSONObject jVideo     = jsonObject.getJSONObject("video");
             return jVideo.toBean(Video.class);
         } catch (IOException e) {
-            log.error("error", e);
+            log.error("Error", e);
             return new Video();
         }
     }
@@ -192,5 +182,8 @@ public class RequestUtil {
         req.setHeader("Accept-Language", "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,en-GB;q=0.6");
     }
 
+    private static void logRequestUrl(String url) {
+        log.debug("Request URL: {}", url);
+    }
 
 }
