@@ -32,13 +32,13 @@
 **不登录账号：**
 
 ```shell
-nohup java -Xmx64m -Xms64m -jar -Dlogin=false -Dtoken=a-iQ_qHLYe7Lp7p1GDeNT8_CnZg25CQ4-1637546627 -DuserId=10740728 -DcourseId=406 -DkeyPrefix=hb ./bjjnts-1.0-SNAPSHOT.jar > /dev/null 2>&1 & 
+nohup java -Xmx64m -Xms64m -jar -Dlogin=false -Dtoken=a-iQ_qHLYe7Lp7p1GDeNT8_CnZg25CQ4-1637546627 -DuserId=10740728 -DcourseId=406 -DkeyPrefix=bennie ./bjjnts-1.0-SNAPSHOT.jar > /dev/null 2>&1 & 
 ```
 
 **登录账号：**
 
 ```shell
-nohup java -Xmx64m -Xms64m -jar -Dlogin=true -Dusername=13311112222 -Dpassword=sssss -DcourseId=406 -DkeyPrefix=hb ./bjjnts-1.0-SNAPSHOT.jar > /dev/null 2>&1 & 
+nohup java -Xmx64m -Xms64m -jar -Dlogin=true -Dusername=13311112222 -Dpassword=sssss -DcourseId=406 -DkeyPrefix=bennie ./bjjnts-1.0-SNAPSHOT.jar > /dev/null 2>&1 & 
 ```
 
 View log：
@@ -46,25 +46,35 @@ View log：
 ```shell
 tail -f -n500 ./logs/bjjnts.log
 
-[2021-11-23 10:17:53.027] INFO ---[main                          ] i.b.u.RequestUtil             ##loginAccount:80: Logging into your account, using [username: 15058221727, password: 6868668].
-[2021-11-23 10:17:54.796] INFO ---[main                          ] i.b.c.LoginComponent          ##cacheUserInfo:70: Caching user info...
-[2021-11-23 10:17:56.078] INFO ---[main                          ] i.b.c.LoginComponent          ##cacheUserInfo:76: Finished Caching.
-[2021-11-23 10:17:56.111] INFO ---[main                          ] i.b.Config                    ##loadConfig:63: Config(courseId=406, keyPrefix=gl, doLogin=true, userId=10740743, username=xxxxxx, password=xxxxx, accessToken=Bearer a-iQ_qHLYe7Lp7p2GDeNT8_CnZg25CQ4-1637546627)
-[2021-11-23 10:17:56.130] INFO ---[main                          ] i.b.c.CourseComponent         ##cacheCourseUnit:59: Caching course units info..
-[2021-11-23 10:17:56.130] INFO ---[main                          ] i.b.u.RequestUtil             ##listCourseInfo:98: Request to list course info. url: https://apif.bjjnts.cn/courses/test-preview?course_id=406&class_id=27779
-[2021-11-23 10:17:56.578] DEBUG---[main                          ] i.b.c.CourseComponent         ##cacheCourseUnit:62: key: gl_406_unit
-[2021-11-23 10:17:56.622] INFO ---[main                          ] i.b.c.CourseComponent         ##cacheCourseUnit:74: Caching finished.
-[2021-11-23 10:17:56.636] INFO ---[main                          ] i.b.Main                      ##logoutProgress:66: 总视频数：20，已播放视频数：11，未播放视频数：9
+[2021-11-24 14:49:51.962] INFO ---[main] im.bennie.util.RequestUtil#loginAccount:93: Logging into your account username = xxxxxxxx, password = xxxxxxxx
+[2021-11-24 14:49:53.634] INFO ---[main] im.bennie.component.LoginComponent#cacheUserInfo:41: Caching user info...
+[2021-11-24 14:49:55.247] INFO ---[main] im.bennie.component.LoginComponent#cacheUserInfo:47: Finished Caching.
+[2021-11-24 14:49:55.355] INFO ---[main] im.bennie.Config#loadConfig:63: Config(courseId=446, keyPrefix=bennie, doLogin=true, userId=10740743, username=xxxxxxxx, password=xxxxxxxx, accessToken=Bearer zo5MTB8rgLZlbrPB7IeFZ-8Aa8-hFIm9-1637736593)
+[2021-11-24 14:49:55.375] INFO ---[main] im.bennie.util.RequestUtil#listCourseInfo:110: Requesting for list courses(id = 446) info
+[2021-11-24 14:49:55.376] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apif.bjjnts.cn/courses/test-preview?course_id=446&class_id=27779
+[2021-11-24 14:49:56.250] INFO ---[main] im.bennie.Main#run:42: Total units is: 89
+[2021-11-24 14:49:56.252] INFO ---[main] im.bennie.Main#logVideoUnitProgress:82: 已播放视频单元数：59，未播放数：30
+[2021-11-24 14:49:56.255] INFO ---[main] im.bennie.component.CourseComponent#retrieveUnitVideoFromCache:60: Retrieving unit-video mapping from cache.
+[2021-11-24 14:49:56.337] INFO ---[main] im.bennie.Main#playVideo:91: Working on video unit [id = 9756, videoId = 9720, title = 5.5内存计算需求, totalTime = 253, progress = 0, progressTime = 240]. 
 
+[2021-11-24 14:49:56.337] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:73: Requesting to update study time.
+[2021-11-24 14:49:56.337] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apistudy.bjjnts.cn/studies/study?video_id=9720&u=10740743&time=253&unit_id=9756&class_id=27779&end=1
+[2021-11-24 14:49:56.653] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:82: Result: {"video_time":253,"count_time":"253"}
+[2021-11-24 14:49:56.654] INFO ---[main] im.bennie.Main#playVideo:91: Working on video unit [id = 9757, videoId = 9721, title = 5.6MapReduce文件传递数据, totalTime = 231, progress = 0, progressTime = 0]. 
 
-[2021-11-23 10:23:57.468] INFO ---[main                          ] i.b.Main                      ##playVideo:72: 正在处理 unit id: 8371, video id: 8427, title: 视频单元, totalTime: 713, progress: 0, progressTime: 0
-[2021-11-23 10:23:57.468] INFO ---[main                          ] i.b.Main                      ##playVideo:170: 第0次提交学习时长请求，当前提交播放时间第0秒处。
-[2021-11-23 10:23:57.468] INFO ---[main                          ] i.b.u.RequestUtil             ##updateStudyTime:61: 更新学习时间URL：https://apistudy.bjjnts.cn/studies/study?video_id=8427&u=10740743&time=0&unit_id=8371&class_id=27779&start=1
-[2021-11-23 10:23:57.767] INFO ---[main                          ] i.b.u.RequestUtil             ##updateStudyTime:69: Result: {"video_time":0,"count_time":"713"}
-[2021-11-23 10:25:57.769] INFO ---[main                          ] i.b.Main                      ##playVideo:170: 第1次提交学习时长请求，当前提交播放时间第120秒处。
-[2021-11-23 10:25:57.769] INFO ---[main                          ] i.b.u.RequestUtil             ##updateStudyTime:61: 更新学习时间URL：https://apistudy.bjjnts.cn/studies/study?video_id=8427&u=10740743&time=120&unit_id=8371&class_id=27779
-[2021-11-23 10:25:58.051] INFO ---[main                          ] i.b.u.RequestUtil             ##updateStudyTime:69: Result: {"video_time":120,"count_time":"713"}
-[2021-11-23 10:27:58.052] INFO ---[main                          ] i.b.Main                      ##playVideo:170: 第2次提交学习时长请求，当前提交播放时间第240秒处。
+[2021-11-24 14:49:56.654] INFO ---[main] im.bennie.Main#playVideo:188: Submitting study time at 0s for 0 times.
+[2021-11-24 14:49:56.655] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:73: Requesting to update study time.
+[2021-11-24 14:49:56.655] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apistudy.bjjnts.cn/studies/study?video_id=9721&u=10740743&time=0&unit_id=9757&class_id=27779&start=1
+[2021-11-24 14:49:56.977] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:82: Result: {"video_time":0,"count_time":"231"}
+[2021-11-24 14:51:56.978] INFO ---[main] im.bennie.Main#playVideo:188: Submitting study time at 1s for 120 times.
+[2021-11-24 14:51:56.978] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:73: Requesting to update study time.
+[2021-11-24 14:51:56.978] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apistudy.bjjnts.cn/studies/study?video_id=9721&u=10740743&time=120&unit_id=9757&class_id=27779
+[2021-11-24 14:51:57.280] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:82: Result: {"video_time":120,"count_time":"231"}
+[2021-11-24 14:53:57.281] INFO ---[main] im.bennie.Main#playVideo:188: Submitting study time at 2s for 231 times.
+[2021-11-24 14:53:57.282] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:73: Requesting to update study time.
+[2021-11-24 14:53:57.282] DEBUG---[main] im.bennie.util.RequestUtil#logRequestUrl:186: Request URL: https://apistudy.bjjnts.cn/studies/study?video_id=9721&u=10740743&time=231&unit_id=9757&class_id=27779&end=1
+[2021-11-24 14:53:57.557] INFO ---[main] im.bennie.util.RequestUtil#updateStudyTime:82: Result: {"video_time":231,"count_time":"231"}
+[2021-11-24 14:53:57.557] INFO ---[main] im.bennie.Main#playVideo:91: Working on video unit [id = 9758, videoId = 9722, title = 5.7内存计算的可行性, totalTime = 229, progress = 0, progressTime = 0].
 ```
 
 ## 接口分析
@@ -77,7 +87,7 @@ Request：
 ## username: 手机号
 ## password：密码，明文
 
-curl 'https://apif.bjjnts.cn/account/login' -X POST -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0' -H 'Accept: application/json, text/plain, */*' -H 'Accept-Language: zh-CN,en-US;q=0.7,en;q=0.3' --compressed -H 'Referer: https://www.bjjnts.cn/user/login' -H 'Content-Type: application/json' -H 'X-Client-Type: pc' -H 'Origin: https://www.bjjnts.cn' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' --data-raw '{"username":"15058221727","password":"6868668","type":1}'
+curl 'https://apif.bjjnts.cn/account/login' -X POST -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0' -H 'Accept: application/json, text/plain, */*' -H 'Accept-Language: zh-CN,en-US;q=0.7,en;q=0.3' --compressed -H 'Referer: https://www.bjjnts.cn/user/login' -H 'Content-Type: application/json' -H 'X-Client-Type: pc' -H 'Origin: https://www.bjjnts.cn' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-site' --data-raw '{"username":"xxxxxxxx","password":"xxxxxxxx","type":1}'
 ```
 
 Response：
@@ -85,7 +95,7 @@ Response：
 ```json
 {
   // User id
-  "id": 00000000,
+  "id": 1111111,
   "sid": "1011",
   "type": 1,
   // Your phone number
@@ -94,6 +104,7 @@ Response：
   "username": "s10847107",
   "name": "",
   "avatar": "https://thirdwx.qlogo.cn/mmopen/vi_32/bf03H2wR4RNc42PqBEFg5kSSUAIa6h0DW0egY2DRfP3bXL0IJDwN3yZandfEvA4LJ0Lb7mjo6sbwTjSEHGwJ6g/132",
+  // Access token
   "access_token": "Bo0CMcktxWHBI_UO6oHHN2l3driYjX10-1637294006",
   "app_token": "",
   "status": 0,
@@ -104,7 +115,7 @@ Response：
     "sid": "1011",
     // User id 
     "uid": "00000000",
-    // your id-card
+    // Your id-card
     "idcard": "1111111111111111111111111",
     "real_auth_status": "1",
     "is_phone": "1",
