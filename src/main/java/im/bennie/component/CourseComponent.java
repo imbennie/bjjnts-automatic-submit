@@ -212,9 +212,9 @@ public class CourseComponent {
                         .collect(Collectors.toMap(Map.Entry::getKey, entry -> (boolean) entry.getValue()));
             }
         } catch (Exception e) {
-            log.error("Error while retrieve from redis", e);
+            log.error("Error while retrieve from cache.", e);
         }
-        log.info("Trying to get from origin Units because we didn't get results from cache.");
+        log.info("Trying to get from origin Units because no results found from cache.");
         // Consider all article units are unfinished.
         return filterArticleUnits(units).stream().collect(Collectors.toMap(Unit::getId, u -> false));
     }

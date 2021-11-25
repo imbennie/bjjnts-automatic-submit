@@ -68,7 +68,6 @@ public class Main {
                     ));
             cc.cacheArticleUnitProgress(map);
         }
-        logVideoUnitProgress(units);
     }
 
     private static ResponseObject markArticleUnitOK(String unitId) {
