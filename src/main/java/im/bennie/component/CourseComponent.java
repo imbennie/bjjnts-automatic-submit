@@ -95,7 +95,7 @@ public class CourseComponent {
 
     /**
      * Build a mapping of unit and video.
-     * This should be cache only once.
+     * This should be cached only once.
      */
     public void cacheUnitVideoInfo() {
         String key = getUnitVideoMappingKey();

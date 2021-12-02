@@ -13,8 +13,7 @@ public enum UnitTypeEnum {
     Video(1),
     Article(3);
 
-
-    private int type;
+    private final int type;
 
     UnitTypeEnum(int type) {
         this.type = type;
@@ -25,11 +24,10 @@ public enum UnitTypeEnum {
     }
 
     public static UnitTypeEnum type(Unit u) {
-        return Arrays.stream(values()).filter(i -> i.getType() == Integer.parseInt(u.getType()))
+        return Arrays.stream(values())
+                .filter(i -> i.getType() == Integer.parseInt(u.getType()))
                 .findFirst()
-                .orElseThrow(
-                        () -> new RuntimeException("无法确定单元类型。")
-                );
+                .orElseThrow(() -> new RuntimeException("无法确定单元类型。"));
     }
 
     public static boolean isArticle(Unit u) {
