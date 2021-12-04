@@ -174,20 +174,24 @@ public class Main {
                         resp.getBody().getInt("video_time");
     }
 
-    private static void checkResponse(ResponseObject resp) {
+    private static void shouldExit(ResponseObject resp) {
         JSONObject body = resp.getBody();
         Integer    code = body.getInt("code", 0);
-        if (code == 2002 || code == 2003) {
-            log.info("System is going to shutdown.");
-            System.exit(0);
-        }
+
+        if (code == 2002 || code == 2003 || code == 3003)
+            systemExit();
+    }
+
+    private static void systemExit() {
+        log.info("System is going to shutdown.");
+        System.exit(0);
     }
 
     public static ResponseObject playVideo(Unit unit, int totalTime, int submitTime, int num, int count, boolean firstPlay) {
         if (submitTime > totalTime) submitTime = totalTime;
         log.info("Submitting study time at {}s for {} times.", submitTime, ((int) (Math.ceil(num / 2.0)) + 1));
         ResponseObject resp = RequestUtil.updateStudyTime(unit.getVideoId(), submitTime, unit.getId(), firstPlay, num == count);
-        checkResponse(resp);
+        shouldExit(resp);
         return resp;
     }
 
