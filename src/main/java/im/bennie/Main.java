@@ -68,6 +68,8 @@ public class Main {
                     ));
             cc.cacheArticleUnitProgress(map);
         }
+
+        log.info("Program running over, time to exit.");
     }
 
     private static ResponseObject markArticleUnitOK(String unitId) {

@@ -214,7 +214,6 @@ public class CourseComponent {
         } catch (Exception e) {
             log.error("Error while retrieve from cache.", e);
         }
-        log.info("Trying to get from origin Units because no results found from cache.");
         // Consider all article units are unfinished.
         return filterArticleUnits(units).stream().collect(Collectors.toMap(Unit::getId, u -> false));
     }
