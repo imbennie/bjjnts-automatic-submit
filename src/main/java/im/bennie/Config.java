@@ -26,16 +26,16 @@ public class Config {
 
     private Config() {}
 
-    private static Config c;
+    private static Config instance;
 
     public static Config getInstance() {
-        return c != null ? c : loadConfig();
+        return instance != null ? instance : loadConfig();
     }
 
 
     private static Config loadConfig() {
-        c = new Config();
-        c.setCourseId(Integer.parseInt(System.getProperty("courseId")));
+        instance = new Config();
+        instance.setCourseId(Integer.parseInt(System.getProperty("courseId")));
 
         String kp;
         try {
@@ -43,25 +43,25 @@ public class Config {
         } catch (Exception e) {
             kp = String.valueOf(System.currentTimeMillis());
         }
-        c.setKeyPrefix(kp);
+        instance.setKeyPrefix(kp);
 
         boolean lg = Boolean.parseBoolean(System.getProperty("login"));
-        c.setDoLogin(lg);
+        instance.setDoLogin(lg);
         if (lg) {
-            c.setUsername(System.getProperty("username"));
-            c.setPassword(System.getProperty("password"));
+            instance.setUsername(System.getProperty("username"));
+            instance.setPassword(System.getProperty("password"));
 
             UserInfo user  = new LoginComponent().login();
             String   token = user.getAccess_token();
-            c.setUserId(String.valueOf(user.getId()));
-            c.setAccessToken(token);
+            instance.setUserId(String.valueOf(user.getId()));
+            instance.setAccessToken(token);
         } else {
-            c.setUserId(System.getProperty("userId"));
-            c.setAccessToken(System.getProperty("token"));
+            instance.setUserId(System.getProperty("userId"));
+            instance.setAccessToken(System.getProperty("token"));
         }
 
-        log.info(c.toString());
-        return c;
+        log.info(instance.toString());
+        return instance;
     }
 
 
