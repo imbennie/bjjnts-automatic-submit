@@ -7,11 +7,14 @@ import java.util.Arrays;
 /**
  * Created on 11/23 2021.
  * <p>
+ *
  * @author Bennie
  */
 public enum UnitTypeEnum {
     Video(1),
-    Article(3);
+    PRACTICE(2),
+    Article(3),
+    OTHER(-1);
 
     private final int type;
 
@@ -27,7 +30,7 @@ public enum UnitTypeEnum {
         return Arrays.stream(values())
                 .filter(i -> i.getType() == Integer.parseInt(u.getType()))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("无法确定单元类型。"));
+                .orElse(OTHER);
     }
 
     public static boolean isArticle(Unit u) {
